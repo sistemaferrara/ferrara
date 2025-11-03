@@ -24,7 +24,7 @@ async function getClientes() {
         return data || [];
     } catch (error) {
         console.error('Erro ao buscar clientes:', error);
-        window.Utils.Toast.error('Erro ao buscar clientes');
+        Toast.error('Erro ao buscar clientes');
         return [];
     }
 }
@@ -50,7 +50,7 @@ async function adicionarCliente(cliente) {
 
         if (error) throw error;
 
-        window.Utils.Toast.success('Cliente adicionado com sucesso');
+        Toast.success('Cliente adicionado com sucesso');
         return {
             id: data.id,
             nome: data.nome,
@@ -65,7 +65,7 @@ async function adicionarCliente(cliente) {
         };
     } catch (error) {
         console.error('Erro ao adicionar cliente:', error);
-        window.Utils.Toast.error('Erro ao adicionar cliente');
+        Toast.error('Erro ao adicionar cliente');
         throw error;
     }
 }
@@ -87,10 +87,10 @@ async function atualizarCliente(cliente) {
             .eq('id', cliente.id);
 
         if (error) throw error;
-        window.Utils.Toast.success('Cliente atualizado com sucesso');
+        Toast.success('Cliente atualizado com sucesso');
     } catch (error) {
         console.error('Erro ao atualizar cliente:', error);
-        window.Utils.Toast.error('Erro ao atualizar cliente');
+        Toast.error('Erro ao atualizar cliente');
         throw error;
     }
 }
@@ -103,10 +103,10 @@ async function excluirCliente(id) {
             .eq('id', id);
 
         if (error) throw error;
-        window.Utils.Toast.success('Cliente excluído com sucesso');
+        Toast.success('Cliente excluído com sucesso');
     } catch (error) {
         console.error('Erro ao excluir cliente:', error);
-        window.Utils.Toast.error('Erro ao excluir cliente');
+        Toast.error('Erro ao excluir cliente');
         throw error;
     }
 }
@@ -136,7 +136,8 @@ async function getProdutos() {
         }));
     } catch (error) {
         console.error('Erro ao buscar produtos:', error);
-        window.Utils.Toast.error('Erro ao buscar produtos:');        return [];
+        Toast.error('Erro ao buscar produtos');
+        return [];
     }
 }
 
@@ -164,7 +165,7 @@ async function adicionarProduto(produto) {
 
         if (error) throw error;
 
-        window.Utils.Toast.success('Produto adicionado com sucesso');
+        Toast.success('Produto adicionado com sucesso');
         return {
             id: data.id,
             nome: data.nome,
@@ -177,7 +178,7 @@ async function adicionarProduto(produto) {
         };
     } catch (error) {
         console.error('Erro ao adicionar produto:', error);
-        window.Utils.Toast.error('Erro ao adicionar produto');
+        Toast.error('Erro ao adicionar produto');
         throw error;
     }
 }
@@ -204,10 +205,10 @@ async function atualizarProduto(produto) {
             .eq('id', produto.id);
 
         if (error) throw error;
-        window.Utils.Toast.success('Produto atualizado com sucesso');
+        Toast.success('Produto atualizado com sucesso');
     } catch (error) {
         console.error('Erro ao atualizar produto:', error);
-        window.Utils.Toast.error('Erro ao atualizar produto');
+        Toast.error('Erro ao atualizar produto');
         throw error;
     }
 }
@@ -220,10 +221,10 @@ async function excluirProduto(id) {
             .eq('id', id);
 
         if (error) throw error;
-        window.Utils.Toast.success('Produto excluído com sucesso');
+        Toast.success('Produto excluído com sucesso');
     } catch (error) {
         console.error('Erro ao excluir produto:', error);
-        window.Utils.Toast.error('Erro ao excluir produto');
+        Toast.error('Erro ao excluir produto');
         throw error;
     }
 }
@@ -335,7 +336,7 @@ async function getVendas() {
         return vendasCompletas.filter(v => v !== null);
     } catch (error) {
         console.error('Erro ao buscar vendas:', error);
-        window.Utils.Toast.error('Erro ao buscar vendas');
+        Toast.error('Erro ao buscar vendas');
         return [];
     }
 }
@@ -400,10 +401,11 @@ async function adicionarVenda(venda) {
             }
         }
 
-        window.Utils.Toast.success('Venda adicionada com sucesso');        return vendaData;
+        Toast.success('Venda realizada com sucesso');
+        return vendaData;
     } catch (error) {
         console.error('Erro ao adicionar venda:', error);
-       window.Utils.Toast.error('Erro ao adicionar venda');
+        Toast.error('Erro ao realizar venda');
         throw error;
     }
 }
@@ -426,17 +428,4 @@ window.API = {
     // Vendas
     getVendas,
     adicionarVenda,
-};
-
-window.API = {
-    getClientes,
-    adicionarCliente,
-    atualizarCliente,
-    excluirCliente,
-    getProdutos,
-    adicionarProduto,
-    atualizarProduto,
-    excluirProduto,
-    getVendas,
-    adicionarVenda
 };
