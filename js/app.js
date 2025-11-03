@@ -2,8 +2,10 @@
 // APP MAIN - Application Logic
 // ===================================
 
-const { Toast, Loading, formatCurrency, formatDate, validateEmail, validateCPF, validateCNPJ, formatCPFCNPJ, formatPhone, formatCEP, debounce } = window.Utils;
-const { renderDashboard, renderClientes, renderProdutos, renderVendas, renderClientesList, renderProdutosList, renderProdutosVenda } = window.Components;
+// As funções são globais, não é necessário desestruturar de window.Utils se utils.js for carregado antes.
+// 
+// As funções são globais, não é necessário desestruturar de window.Components se components.js for carregado antes.
+// 
 
 // State
 let currentModule = 'dashboard';
@@ -64,22 +66,22 @@ async function navigateTo(module) {
     
     switch(module) {
         case 'dashboard':
-            html = await renderDashboard();
+            html = await window.Components.renderDashboard();
             break;
         case 'clientes':
-            html = await renderClientes();
+            html = await window.Components.renderClientes();
             setupClientesSearch();
             break;
         case 'produtos':
-            html = await renderProdutos();
+            html = await window.Components.renderProdutos();
             setupProdutosSearch();
             break;
         case 'vendas':
-            html = await renderVendas();
+            html = await window.Components.renderVendas();
             setupProdutosVendaSearch();
             break;
         default:
-            html = await renderDashboard();
+            html = await window.Components.renderDashboard();
     }
     
     mainContent.innerHTML = html;
@@ -117,7 +119,7 @@ function setupClientesSearch() {
     const searchInput = document.getElementById('searchClientes');
     if (!searchInput) return;
     
-    searchInput.addEventListener('input', debounce(async (e) => {
+    searchInput.addEventListener('input', window.Utils.debounce(async (e) => {
         const searchTerm = e.target.value.toLowerCase();
         const clientes = await API.getClientes();
         const filtered = clientes.filter(c => 
@@ -128,7 +130,7 @@ function setupClientesSearch() {
         
         const grid = document.getElementById('clientesGrid');
         if (grid) {
-            grid.innerHTML = renderClientesList(filtered);
+            grid.innerHTML = window.Components.renderClientesList(filtered);
         }
     }, 300));
 }
@@ -136,7 +138,7 @@ function setupClientesSearch() {
 function openClienteModal(clienteId = null) {
     editingClienteId = clienteId;
     
-    const modal = createModal('clienteModal', clienteId ? 'Editar Cliente' : 'Novo Cliente', `
+    const modal = window.Components.createModal('clienteModal', clienteId ? 'Editar Cliente' : 'Novo Cliente', `
         <form id="clienteForm">
             <div class="form-group">
                 <label class="form-label">Nome *</label>
@@ -228,25 +230,25 @@ async function salvarCliente() {
     };
     
     // Validations
-    if (!validateEmail(cliente.email)) {
-        Toast.error('Email inválido');
+    if (!window.Utils.validateEmail(cliente.email)) {
+        window.Utils.Toast.error('Email inválido');
         return false;
     }
     
     if (cliente.cpfCnpj) {
         const cleanCpfCnpj = cliente.cpfCnpj.replace(/[^\d]/g, '');
-        if (cleanCpfCnpj.length === 11 && !validateCPF(cleanCpfCnpj)) {
-            Toast.error('CPF inválido');
+        if (cleanCpfCnpj.length === 11 && !window.Utils.validateCPF(cleanCpfCnpj)) {
+            window.Utils.Toast.error('CPF inválido');
             return false;
         }
-        if (cleanCpfCnpj.length === 14 && !validateCNPJ(cleanCpfCnpj)) {
-            Toast.error('CNPJ inválido');
+        if (cleanCpfCnpj.length === 14 && !window.Utils.validateCNPJ(cleanCpfCnpj)) {
+            window.Utils.Toast.error('CNPJ inválido');
             return false;
         }
     }
     
     try {
-        Loading.show();
+        window.Utils.Loading.show();
         
         if (editingClienteId) {
             cliente.id = editingClienteId;
@@ -260,7 +262,7 @@ async function salvarCliente() {
     } catch (error) {
         return false;
     } finally {
-        Loading.hide();
+        window.Utils.Loading.hide();
     }
 }
 
@@ -269,7 +271,7 @@ async function editarCliente(clienteId) {
 }
 
 async function confirmarExclusaoCliente(clienteId, clienteNome) {
-    const modal = createModal('confirmModal', 'Confirmar Exclusão', `
+    const modal = window.Components.createModal('confirmModal', 'Confirmar Exclusão', `
         <p style="color: var(--color-text-secondary);">
             Tem certeza que deseja excluir o cliente <strong>${clienteNome}</strong>?
             Esta ação não pode ser desfeita.
@@ -278,10 +280,10 @@ async function confirmarExclusaoCliente(clienteId, clienteNome) {
         confirmText: 'Excluir',
         confirmClass: 'btn-danger',
         onConfirm: async () => {
-            Loading.show();
+            window.Utils.Loading.show();
             await API.excluirCliente(clienteId);
             await navigateTo('clientes');
-            Loading.hide();
+            window.Utils.Loading.hide();
             return true;
         }
     });
@@ -294,7 +296,7 @@ function setupProdutosSearch() {
     const searchInput = document.getElementById('searchProdutos');
     if (!searchInput) return;
     
-    searchInput.addEventListener('input', debounce(async (e) => {
+    searchInput.addEventListener('input', window.Utils.debounce(async (e) => {
         const searchTerm = e.target.value.toLowerCase();
         const produtos = await API.getProdutos();
         const filtered = produtos.filter(p => 
@@ -312,7 +314,7 @@ function setupProdutosSearch() {
 function openProdutoModal(produtoId = null) {
     editingProdutoId = produtoId;
     
-    const modal = createModal('produtoModal', produtoId ? 'Editar Produto' : 'Novo Produto', `
+    const modal = window.Components.createModal('produtoModal', produtoId ? 'Editar Produto' : 'Novo Produto', `
         <form id="produtoForm">
             <div class="form-group">
                 <label class="form-label">Nome *</label>
@@ -422,7 +424,7 @@ async function salvarProduto() {
     };
     
     try {
-        Loading.show();
+        window.Utils.Loading.show();
         
         if (editingProdutoId) {
             produto.id = editingProdutoId;
@@ -436,7 +438,7 @@ async function salvarProduto() {
     } catch (error) {
         return false;
     } finally {
-        Loading.hide();
+        window.Utils.Loading.hide();
     }
 }
 
@@ -445,7 +447,7 @@ async function editarProduto(produtoId) {
 }
 
 async function confirmarExclusaoProduto(produtoId, produtoNome) {
-    const modal = createModal('confirmModal', 'Confirmar Exclusão', `
+    const modal = window.Components.createModal('confirmModal', 'Confirmar Exclusão', `
         <p style="color: var(--color-text-secondary);">
             Tem certeza que deseja excluir o produto <strong>${produtoNome}</strong>?
             Esta ação não pode ser desfeita.
@@ -454,10 +456,10 @@ async function confirmarExclusaoProduto(produtoId, produtoNome) {
         confirmText: 'Excluir',
         confirmClass: 'btn-danger',
         onConfirm: async () => {
-            Loading.show();
+            window.Utils.Loading.show();
             await API.excluirProduto(produtoId);
             await navigateTo('produtos');
-            Loading.hide();
+            window.Utils.Loading.hide();
             return true;
         }
     });
@@ -514,12 +516,12 @@ function adicionarAoCarrinho(produtoId) {
     const produto = produtos.find(p => p.id === produtoId);
     
     if (!produto) {
-        Toast.error('Produto não encontrado');
+        window.Utils.Toast.error('Produto não encontrado');
         return;
     }
     
     if (produto.estoque <= 0) {
-        Toast.error('Produto sem estoque');
+        window.Utils.Toast.error('Produto sem estoque');
         return;
     }
     
@@ -561,7 +563,7 @@ function verCarrinho() {
     
     const total = carrinhoAtual.reduce((sum, item) => sum + item.subtotal, 0);
     
-    const modal = createModal('carrinhoModal', 'Carrinho de Compras', `
+    const modal = window.Components.createModal('carrinhoModal', 'Carrinho de Compras', `
         <div class="table-container">
             <table class="table">
                 <thead>
@@ -661,7 +663,7 @@ function removerDoCarrinho(index) {
 function abrirModalPagamento() {
     const total = carrinhoAtual.reduce((sum, item) => sum + item.subtotal, 0);
     
-    const modal = createModal('pagamentoModal', 'Forma de Pagamento', `
+    const modal = window.Components.createModal('pagamentoModal', 'Forma de Pagamento', `
         <div style="margin-bottom: 1.5rem;">
             <h3 style="font-size: 1.125rem; font-weight: 600; margin-bottom: 0.5rem;">Total da Venda</h3>
             <div style="font-size: 2rem; font-weight: 700; color: var(--color-success);">
@@ -738,7 +740,7 @@ async function finalizarVenda() {
     const formaPagamento = document.getElementById('formaPagamento').value;
     
     if (!formaPagamento) {
-        Toast.error('Selecione a forma de pagamento');
+        window.Utils.Toast.error('Selecione a forma de pagamento');
         return false;
     }
     
@@ -751,7 +753,7 @@ async function finalizarVenda() {
     } else if (formaPagamento === 'pix') {
         const dataVencimento = document.getElementById('dataVencimento').value;
         if (!dataVencimento) {
-            Toast.error('Informe a data de vencimento');
+            window.Utils.Toast.error('Informe a data de vencimento');
             return false;
         }
         pagamento = { tipo: 'pix', dataVencimento };
@@ -770,7 +772,7 @@ async function finalizarVenda() {
     };
     
     try {
-        Loading.show();
+        window.Utils.Loading.show();
         await API.adicionarVenda(venda);
         
         // Gerar PDF
@@ -788,7 +790,7 @@ async function finalizarVenda() {
     } catch (error) {
         return false;
     } finally {
-        Loading.hide();
+        window.Utils.Loading.hide();
     }
 }
 
@@ -984,3 +986,16 @@ window.removerDoCarrinho = removerDoCarrinho;
 window.mostrarCamposPagamento = mostrarCamposPagamento;
 window.calcularParcelas = calcularParcelas;
 window.closeModal = closeModal;
+
+window.App = {
+    navigateTo,
+    openClienteModal,
+    editarCliente,
+    confirmarExclusaoCliente,
+    openProdutoModal,
+    editarProduto,
+    confirmarExclusaoProduto,
+    openVendaModal,
+    verDetalhesVenda,
+    imprimirRecibo
+};

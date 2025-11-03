@@ -2,8 +2,10 @@
 // COMPONENTS - UI Modules
 // ===================================
 
-const { Toast, Loading, formatCurrency, formatDate, formatDateTime, validateEmail, validateCPF, validateCNPJ, formatCPFCNPJ, formatPhone, formatCEP } = window.Utils;
-const { getClientes, adicionarCliente, atualizarCliente, excluirCliente, getProdutos, adicionarProduto, atualizarProduto, excluirProduto, getVendas, adicionarVenda } = window.API;
+// As funções são globais, não é necessário desestruturar de window.Utils se utils.js for carregado antes.
+// const { Toast, Loading, formatCurrency, formatDate, formatDateTime, validateEmail, validateCPF, validateCNPJ, formatCPFCNPJ, formatPhone, formatCEP } = window.Utils;
+// As funções são globais, não é necessário desestruturar de window.API se api.js for carregado antes.
+// const { getClientes, adicionarCliente, atualizarCliente, excluirCliente, getProdutos, adicionarProduto, atualizarProduto, excluirProduto, getVendas, adicionarVenda } = window.API;
 
 // ===================================
 // DASHBOARD MODULE
@@ -500,6 +502,16 @@ function renderProdutosVenda(produtos) {
 }
 
 // Export components
+window.Components = {
+    renderDashboard,
+    renderClientes,
+    renderProdutos,
+    renderVendas,
+    renderClientesList,
+    renderProdutosList,
+    renderProdutosVenda
+};
+
 window.Components = {
     renderDashboard,
     renderClientes,
